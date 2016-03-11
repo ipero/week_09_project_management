@@ -20,8 +20,6 @@
         //set string to empty
         companyName="";
 
-        console.log("company was called");
-
         var alphabet="abcdefghijklmnopqrstuvwxyz";
 
         for(i=0;i<randomNumber(0,6);i++){
@@ -46,14 +44,18 @@ $(document).ready(function(){
 
     })
 
-    initialize();
+    //initialize();
+    $('.project').on('click', '.make-project', makeProject);
     $('.employees-container').on('click', '.add-employee', addNewEmployee);
+    $('.company-name').on('click', '.assign-staff', assignStaff);
 
 
 })
 
 function addNewEmployee() {
   // $('.employees-container').last().empty();
+  console.log("Add new employee called");
+  addGuyWithAjax(objSkillBoxArray);
 
 }
 
@@ -62,48 +64,40 @@ function calcSprint(){
   var totalFront = 0;
   var totalClient = 0;
   var totalServer = 0;
-  // make fix with sprint number
+
   for(var i=0; i<team.length;i++){
     if(team[i].skill=="Front End"){
-      totalFront=totalFront + frontEndReq/team[i].scrumNum;
+      totalFront=totalFront + team[i].scrumNum;
 
     }else if(team[i].skill=="Clientside Logic"){
-      totalClient=totalClient + clientReq/team[i].scrumNum;
+      totalClient=totalClient + team[i].scrumNum;
     }else if(team[i].skill=="Serverside Logic"){
-      totalServer=totalServer + serverReq/team[i].scrumNum;
+      totalServer=totalServer + team[i].scrumNum;
 
     }
+
   }
+  totalClient = clientReq/totalClient;
+  totalFront = frontEndReq/totalFront;
+  totalServer = serverReq/totalServer;
+
   sprintsToFinish = Math.max(totalFront, totalClient, totalServer);
   $('.sprints').html('<p>Total Sprints to finish project is: ' + Math.ceil(sprintsToFinish) +'</p>');
 }
-function addGuyWithAjax (){
+
+function addGuyWithAjax (skills){
   $.ajax({
       type: "POST",
       url: "/emps",
-      data: objSkillBox,
+      data: skills,
       success: function(data){
           team.push(data);
           console.log(team);
 
-
           $('.employees-container').append('<div class="employee"></div>');
           var $el = $('.employees-container').children().last();
           $el.append('<p>' + data.name +' have skills ' + data.skill + ' and scrum number ' + data.scrumNum + '</p>');
-
-          for (var i=0; i<objSkillBox.skills.length; i++){
-              if(data.skill == objSkillBox.skills[i]){
-                  objSkillBox.skills.splice(i,1);
-
-                  if(objSkillBox.skills.length>0){
-                    postWithAjax(objSkillBox);
-                  }else if(objSkillBox.skills.length==0){
-
-                    calcSprint();
-                    $('.employees-container').append('<button class="add-employee">Add new staff</button>');
-                  }
-              }
-          }
+          calcSprint();
       }
   });
 
@@ -140,6 +134,7 @@ function postWithAjax(objSkillBox){
 }
 function assignStaff(){
     $('.employees-container').empty();
+    team=[];
     var objSkillBox = {
         "skills": ["Front End","Clientside Logic", "Serverside Logic"]
     }
@@ -158,7 +153,9 @@ function initialize(){
 
 }
 function makeProject(){
-
+    team = [];
+    $('.employees-container').empty();
+    $('.sprints').empty();
     console.log("we are in make project");
     createCompanyName();
     setRequirements();
@@ -166,7 +163,7 @@ function makeProject(){
     //after we have all the project bits
     displayProject();
     addStaffButton();
-    addStaffListener();
+    //addStaffListener();
 
 
 }
@@ -179,15 +176,14 @@ function addStaffListener(){
 }
 function addStaffButton(){
 
-
     $('.company-name').append('<button class="assign-staff">Assign Staff</button>');
-
-
 
 }
 function setRequirements(){
 
-
+    frontEndReq = 0;
+    clientReq = 0;
+    serverReq = 0;
     frontEndReq = randomNumber(10,60);
     clientReq = randomNumber(10,60);
     serverReq = randomNumber(10,60);
@@ -209,23 +205,13 @@ function displayProject(){
     $('.company-name').append('<p>Serverside Logic Requirements:  ' + serverReq + '</p>');
 
 
-
-
-        // frontEndReq = randomNumber(10,60);
-        // clientReq = randomNumber(10,60);
-        // serverReq = randomNumber(10,60);
-
-
-
 }
 
-function createListeners(){
-
-    $('.project').on('click', '.make-project', makeProject);
-
-
-
-}
+// function createListeners(){
+//
+//     $('.project').on('click', '.make-project', makeProject);
+//
+// }
 
     //---------------
 
