@@ -18,15 +18,6 @@ router.post("/emps", function(req,res){
 
     res.send(emp);
 
-    //var kitty = new Cat({name: req.body.catName});
-    //
-    // kitty.save(function(err){
-    //     if(err){
-    //       console.log( "We had an error",err);
-    //     }
-    //     //console.log("we saved a kitt?");
-    //     res.send("something to send back");
-    // });
 });
 
 

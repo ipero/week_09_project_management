@@ -6,7 +6,7 @@ var randomNumber = function(min, max){
 };
 
 var createName = function(){
-  var name=firstName[randomNumber(0,10)]+lastName[randomNumber(0,8)];
+  var name=firstName[randomNumber(0,10)]+' '+lastName[randomNumber(0,8)];
   return name;
 }
 

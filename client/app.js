@@ -46,43 +46,39 @@ $(document).ready(function(){
 
 })
 
-function postAjax(objSkillBox){
+function postWithAjax(objSkillBox){
   $.ajax({
       type: "POST",
       url: "/emps",
       data: objSkillBox,
       success: function(data){
-
-
           console.log("Hey we got some data", data.skill);
 
-          for (var i=0; i>objSkillBox.skills.length; i++){
+          $('.employees-container').append('<div class="employee"></div>');
+          var $el = $('.employees-container').children().last();
+          $el.append('<p>' + data.name +' have skills ' + data.skill + ' and scrum number ' + data.scrumNum + '</p>');
+
+          for (var i=0; i<objSkillBox.skills.length; i++){
               if(data.skill == objSkillBox.skills[i]){
                   objSkillBox.skills.splice(i,1);
-
+                  console.log(objSkillBox.skills);
+                  if(objSkillBox.skills.length==0){
+                    $('.employees-container').append('<button class="add-employee">Add new staff</button>');
+                  }
+                  if(objSkillBox.skills.length>0){
+                    postWithAjax(objSkillBox);
+                  }
               }
-          }
-          if (objSkillBox.skills>0){
-            postAjax(objSkillBox);
           }
       }
   });
 }
 function assignStaff(){
-
-    //console.log("we are totally assignig staff");
-
-    var gotFront = false;
-    var gotClient = false;
-    var gotServer = false;
-
+    $('.employees-container').empty();
     var objSkillBox = {
         "skills": ["Front End","Clientside Logic", "Serverside Logic"]
     }
-    objSkillBox = postAjax(objSkillBox);
-    if (objSkillBox.skills.length>0){
-      objSkillBox = postAjax(objSkillBox);
-    }
+    postWithAjax(objSkillBox);
 }
 
 function listEmps(data){
