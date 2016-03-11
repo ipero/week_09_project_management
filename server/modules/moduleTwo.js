@@ -4,7 +4,7 @@ var randomNumber = function(min, max){
 
 
 var skillSet = function(skills){
-  return skills[randomNumber(0,2)];
+  return skills[randomNumber(0,skills.length-1)];
 }
 
 module.exports= skillSet;

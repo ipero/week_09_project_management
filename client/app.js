@@ -10,6 +10,11 @@
         return Math.floor(Math.random()*(1 + max - min) + min);
     };
 
+    var team = [];
+    var objSkillBoxArray = {
+        "skills": ["Front End","Clientside Logic", "Serverside Logic"]
+    }
+
     function createCompanyName(){
 
         //set string to empty
@@ -42,17 +47,45 @@ $(document).ready(function(){
     })
 
     initialize();
+    $('.employees-container').on('click', '.add-employee', addNewEmployee);
 
 
 })
 
-function postWithAjax(objSkillBox){
+function addNewEmployee() {
+  // $('.employees-container').last().empty();
+
+}
+
+function calcSprint(){
+  var sprintsToFinish;
+  var totalFront = 0;
+  var totalClient = 0;
+  var totalServer = 0;
+  // make fix with sprint number
+  for(var i=0; i<team.length;i++){
+    if(team[i].skill=="Front End"){
+      totalFront=totalFront + frontEndReq/team[i].scrumNum;
+
+    }else if(team[i].skill=="Clientside Logic"){
+      totalClient=totalClient + clientReq/team[i].scrumNum;
+    }else if(team[i].skill=="Serverside Logic"){
+      totalServer=totalServer + serverReq/team[i].scrumNum;
+
+    }
+  }
+  sprintsToFinish = Math.max(totalFront, totalClient, totalServer);
+  $('.sprints').html('<p>Total Sprints to finish project is: ' + Math.ceil(sprintsToFinish) +'</p>');
+}
+function addGuyWithAjax (){
   $.ajax({
       type: "POST",
       url: "/emps",
       data: objSkillBox,
       success: function(data){
-          console.log("Hey we got some data", data.skill);
+          team.push(data);
+          console.log(team);
+
 
           $('.employees-container').append('<div class="employee"></div>');
           var $el = $('.employees-container').children().last();
@@ -61,12 +94,44 @@ function postWithAjax(objSkillBox){
           for (var i=0; i<objSkillBox.skills.length; i++){
               if(data.skill == objSkillBox.skills[i]){
                   objSkillBox.skills.splice(i,1);
-                  console.log(objSkillBox.skills);
-                  if(objSkillBox.skills.length==0){
-                    $('.employees-container').append('<button class="add-employee">Add new staff</button>');
-                  }
+
                   if(objSkillBox.skills.length>0){
                     postWithAjax(objSkillBox);
+                  }else if(objSkillBox.skills.length==0){
+
+                    calcSprint();
+                    $('.employees-container').append('<button class="add-employee">Add new staff</button>');
+                  }
+              }
+          }
+      }
+  });
+
+}
+function postWithAjax(objSkillBox){
+  $.ajax({
+      type: "POST",
+      url: "/emps",
+      data: objSkillBox,
+      success: function(data){
+          team.push(data);
+          console.log(team);
+
+
+          $('.employees-container').append('<div class="employee"></div>');
+          var $el = $('.employees-container').children().last();
+          $el.append('<p>' + data.name +' have skills ' + data.skill + ' and scrum number ' + data.scrumNum + '</p>');
+
+          for (var i=0; i<objSkillBox.skills.length; i++){
+              if(data.skill == objSkillBox.skills[i]){
+                  objSkillBox.skills.splice(i,1);
+
+                  if(objSkillBox.skills.length>0){
+                    postWithAjax(objSkillBox);
+                  }else if(objSkillBox.skills.length==0){
+
+                    calcSprint();
+                    $('.employees-container').append('<button class="add-employee">Add new staff</button>');
                   }
               }
           }
