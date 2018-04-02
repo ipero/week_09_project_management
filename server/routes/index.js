@@ -24,29 +24,29 @@ router.post("/emps", function(req,res){
 
 
 
-
-router.post("/cats", function(req,res){
-    var kitty = new Cat({name: req.body.catName});
-    //console.log("req body",req.body);
-    //console.log("hopefully req.body.catName", req.body.catName);
-    kitty.save(function(err){
-        if(err){
-          console.log( "We had an error",err);
-        }
-        //console.log("we saved a kitt?");
-        res.send(kitty.toJSON());
-    });
-});
-
-router.get("/cats", function(req,res){
-    Cat.find({}).exec(function(err, cats){
-        if(err){
-          console.log(err);
-        }
-
-        res.send(cats);
-    });
-});
+//
+// router.post("/cats", function(req,res){
+//     var kitty = new Cat({name: req.body.catName});
+//     //console.log("req body",req.body);
+//     //console.log("hopefully req.body.catName", req.body.catName);
+//     kitty.save(function(err){
+//         if(err){
+//           console.log( "We had an error",err);
+//         }
+//         //console.log("we saved a kitt?");
+//         res.send(kitty.toJSON());
+//     });
+// });
+//
+// router.get("/cats", function(req,res){
+//     Cat.find({}).exec(function(err, cats){
+//         if(err){
+//           console.log(err);
+//         }
+//
+//         res.send(cats);
+//     });
+// });
 
 router.get("/*", function(req,res){
     //console.log(req.params);
